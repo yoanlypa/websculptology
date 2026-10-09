@@ -29,7 +29,7 @@
   /* cabecera sólida al hacer scroll + menú móvil */
   safe(function () {
     var header = $(".header");
-    function onScroll() { header.classList.toggle("solid", window.scrollY > 40); }
+    function onScroll() { header.classList.toggle("solid", window.scrollY > 40 || header.hasAttribute("data-solid")); }
     onScroll(); window.addEventListener("scroll", onScroll, { passive: true });
     var burger = $(".burger");
     burger.addEventListener("click", function () {
@@ -81,7 +81,7 @@
       cap.textContent = t.getAttribute("data-cap") || "";
     }
     function open(tile) {
-      group = $$(".tile", tile.closest(".res"));
+      group = $$(".tile", tile.closest("[data-gallery], .res"));
       show(group.indexOf(tile)); lb.classList.add("open"); lb.setAttribute("aria-hidden", "false"); doc.body.style.overflow = "hidden";
     }
     function close() { lb.classList.remove("open"); lb.setAttribute("aria-hidden", "true"); doc.body.style.overflow = ""; }
