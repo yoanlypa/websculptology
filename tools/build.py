@@ -15,6 +15,7 @@ from svg_icons import ICONS, svg, ARROW, WA_ICON, FLAG_ES, FLAG_EN, CHECK  # noq
 from content_data import TERM, RESULTS, REVIEWS  # noqa: E402
 from services_data import SERVICES, BOOK_URL, SHOW_PHOTO_PLACEHOLDERS, INCLUDES  # noqa: E402
 from ui_text import T, S, PHONE_TXT, PHONE_INT, WA_NUM  # noqa: E402
+from blog_posts import POSTS  # noqa: E402
 
 SITE = Path(__file__).resolve().parent.parent / "site"
 IMG = SITE / "assets" / "img"
@@ -65,8 +66,9 @@ def natural(path):
 
 
 # ------------------------------------------------------------------ piezas comunes
-def head(lang, title, desc, self_path, es_path, en_path, pre, ld):
+def head(lang, title, desc, self_path, es_path, en_path, pre, ld, og_type="website", og_image=None):
     url = DOMAIN + self_path
+    og_img = f"{DOMAIN}/assets/img/{og_image}" if og_image else f"{DOMAIN}/assets/img/treatment.webp"
     ld_html = "\n".join(f'<script type="application/ld+json">{json.dumps(x, ensure_ascii=False)}</script>' for x in ld)
     return f'''<!doctype html>
 <html lang="{lang}" class="no-js">
@@ -80,13 +82,13 @@ def head(lang, title, desc, self_path, es_path, en_path, pre, ld):
 <link rel="alternate" hreflang="es" href="{DOMAIN}{es_path}">
 <link rel="alternate" hreflang="en" href="{DOMAIN}{en_path}">
 <link rel="alternate" hreflang="x-default" href="{DOMAIN}{es_path}">
-<meta property="og:type" content="website">
+<meta property="og:type" content="{og_type}">
 <meta property="og:site_name" content="Sculptology">
 <meta property="og:title" content="{esc(title)}">
 <meta property="og:description" content="{esc(desc)}">
 <meta property="og:url" content="{url}">
 <meta property="og:locale" content="{T[lang]["locale"]}">
-<meta property="og:image" content="{DOMAIN}/assets/img/treatment.webp">
+<meta property="og:image" content="{og_img}">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="{pre}assets/img/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -99,7 +101,7 @@ def head(lang, title, desc, self_path, es_path, en_path, pre, ld):
 
 def header(lang, logo_href, pfx, es_href, en_href, solid=False):
     t = T[lang]
-    nav = "".join(f'<a href="{pfx}#{k}">{v}</a>' for k, v in t["nav"])
+    nav = nav_links(lang, pfx)
     cur = lambda l: ' aria-current="true"' if l == lang else ""  # noqa: E731
     flags = (f'<a href="{es_href}" hreflang="es" lang="es" title="Español" aria-label="Español"{cur("es")}>{FLAG_ES}</a>'
              f'<a href="{en_href}" hreflang="en" lang="en" title="English" aria-label="English"{cur("en")}>{FLAG_EN}</a>')
@@ -132,7 +134,7 @@ def cta_band(lang):
 
 def footer_and_widgets(lang, logo_href, pfx, pre):
     t = T[lang]
-    nav = "".join(f'<a href="{pfx}#{k}">{v}</a>' for k, v in t["nav"])
+    nav = nav_links(lang, pfx)
     return f'''<footer class="footer">
   <div class="wrap">
     <div class="f-grid">
@@ -207,6 +209,100 @@ def business_ld(lang):
         "knowsLanguage": ["es", "en"],
         "makesOffer": [{"@type": "Offer", "itemOffered": {"@type": "Service", "name": s["name"]["en"], "url": DOMAIN + page_path("en", s)}} for s in SERVICES],
     }
+
+
+# ------------------------------------------------------------------ blog (utilidades)
+POSTS_PUB = sorted([p for p in POSTS if p.get("published", True)], key=lambda p: p["date"], reverse=True)
+SVC_BY_ID = {s_["id"]: s_ for s_ in SERVICES}
+MONTHS = {"es": ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"],
+          "en": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]}
+_LINK = re.compile(r"\{\{(svc|post):(\w+)\|([^}]+)\}\}")
+POSTS_BY_ID = {p_["id"]: p_ for p_ in POSTS}
+
+
+def blog_path(lang):
+    return "/blog/" if lang == "es" else "/en/blog/"
+
+
+def post_path(lang, p):
+    return f"{blog_path(lang)}{p['slug'][lang]}/"
+
+
+def fmt_date(lang, iso):
+    y, m, d = (int(x) for x in iso.split("-"))
+    return f"{d} de {MONTHS['es'][m - 1]} de {y}" if lang == "es" else f"{d} {MONTHS['en'][m - 1]} {y}"
+
+
+def nav_links(lang, pfx):
+    out = ""
+    for k, v in T[lang]["nav"]:
+        href = blog_path(lang) if k == "blog" else f"{pfx}#{k}"
+        out += f'<a href="{href}">{v}</a>'
+    return out
+
+
+def linkify(text, lang):
+    def one(m):
+        kind, key, label = m.groups()
+        href = page_path(lang, SVC_BY_ID[key]) if kind == "svc" else post_path(lang, POSTS_BY_ID[key])
+        return f'<a href="{href}">{label}</a>'
+    return _LINK.sub(one, text)
+
+
+def render_body(blocks, lang):
+    out, n_img = "", 0
+    for b in blocks:
+        if b[0] == "img":
+            n_img += 1
+            side = "left" if n_img % 2 == 0 else "right"
+            out += f'<figure class="post-fig {side}">{tile(lang, b[1], "/", b[2], b[2], extra_cls="post-img")}</figure>'
+        elif b[0] == "imgfull":
+            out += f'<figure class="post-fig full">{tile(lang, b[1], "/", b[2], b[2], extra_cls="post-img")}<figcaption>{b[3]}</figcaption></figure>'
+        elif b[0] == "h2":
+            out += f"<h2>{b[1]}</h2>"
+        elif b[0] == "p":
+            out += f"<p>{linkify(b[1], lang)}</p>"
+        elif b[0] == "ul":
+            out += "<ul>" + "".join(f"<li>{linkify(i, lang)}</li>" for i in b[1]) + "</ul>"
+        elif b[0] == "note":
+            out += f'<p class="callout">{b[1]}</p>'
+    return out
+
+
+def post_card(lang, p, i=0):
+    t = T[lang]
+    if p.get("cover"):
+        cover = f'<div class="post-cover photo"><img src="/assets/img/{p["cover"]}" alt="" width="446" height="322" loading="lazy" decoding="async"></div>'
+    else:
+        cover = f'<div class="post-cover pc{i % 3}" aria-hidden="true">{svg(SVC_BY_ID[p["services"][0]]["icon"])}</div>'
+    return (f'<a class="post-card reveal" href="{post_path(lang, p)}">{cover}'
+            f'<div class="post-body"><span class="kicker">{p["category"][lang]}</span><h3>{p["title"][lang]}</h3><p>{p["excerpt"][lang]}</p>'
+            f'<span class="post-meta-s">{fmt_date(lang, p["date"])} · {p["read"]} {t["blog_min"]}</span>'
+            f'<span class="svc-more">{t["blog_read"]} <b aria-hidden="true">→</b></span></div></a>')
+
+
+def blog_preview(lang):
+    t = T[lang]
+    if not POSTS_PUB:
+        return ""
+    cards = "".join(post_card(lang, p, i) for i, p in enumerate(POSTS_PUB[:3]))
+    return f"""<section class="sec blog-prev" id="blog">
+  <div class="wrap">
+    <div class="sec-head reveal"><span class="kicker">{t["blog_k"]}</span><h2>{t["blog_h"]}</h2><p>{t["blog_p"]}</p></div>
+    <div class="post-grid">{cards}</div>
+    <div class="svc-note reveal"><a class="btn dark-ghost" href="{blog_path(lang)}">{t["blog_all"]} {ARROW}</a></div>
+  </div>
+</section>
+
+"""
+
+
+def related_posts_html(lang, svc):
+    rel = [p for p in POSTS_PUB if svc["id"] in p["services"]][:3]
+    if not rel:
+        return ""
+    cards = "".join(post_card(lang, p, i) for i, p in enumerate(rel))
+    return f'<section class="sp"><div class="wrap"><h2>{S[lang]["blog"]}</h2><div class="post-grid">{cards}</div></div></section>'
 
 
 # ------------------------------------------------------------------ portada
@@ -306,7 +402,7 @@ def build_home(lang):
   </div>
 </section>
 
-<section class="sec reviews" id="reviews">
+{blog_preview(lang)}<section class="sec reviews" id="reviews">
   <div class="wrap">
     <div class="sec-head reveal">
       <span class="kicker">{t["rev_k"]}</span>
@@ -559,6 +655,7 @@ def build_service(lang, svc):
   <div class="sp-cta"><a class="btn" {BOOK_ATTR}>{t["book"]} {ARROW}</a><p class="appt-note">{t["appt"]}</p></div>
 </div></section>
 
+{related_posts_html(lang, svc)}
 <section class="sp alt"><div class="wrap">
   <h2>{u["others"]}</h2>
   <div class="mini-grid">{others}</div>
@@ -568,6 +665,94 @@ def build_service(lang, svc):
 </main>
 
 ''' + footer_and_widgets(lang, home, home, pre)
+    write_page(path, html)
+
+
+# ------------------------------------------------------------------ páginas del blog
+def build_blog_index(lang):
+    t, u = T[lang], S[lang]
+    home = "/" if lang == "es" else "/en/"
+    path = blog_path(lang)
+    cards = "".join(post_card(lang, p, i) for i, p in enumerate(POSTS_PUB))
+    ld = [
+        {"@context": "https://schema.org", "@type": "Blog", "name": t["blog_h1"], "url": DOMAIN + path, "inLanguage": lang,
+         "description": t["blog_desc"], "publisher": {"@type": "Organization", "name": "Sculptology", "url": DOMAIN + "/"},
+         "blogPost": [{"@type": "BlogPosting", "headline": p["title"][lang], "url": DOMAIN + post_path(lang, p), "datePublished": p["date"]} for p in POSTS_PUB]},
+        {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": u["home"], "item": DOMAIN + home},
+            {"@type": "ListItem", "position": 2, "name": "Blog", "item": DOMAIN + path}]},
+    ]
+    html = head(lang, t["blog_title"], t["blog_desc"], path, "/blog/", "/en/blog/", "/", ld) + f"""</head>
+<body id="top">
+""" + header(lang, home, home, "/blog/", "/en/blog/", solid=True) + f"""
+<main id="main">
+<section class="s-hero blog-hero">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="{home}">{u["home"]}</a></li><li aria-current="page">Blog</li></ol></nav>
+    <span class="kicker">{t["blog_k"]}</span>
+    <h1>{t["blog_h1"]}</h1>
+    <p class="lead">{t["blog_lead"]}</p>
+  </div>
+</section>
+<section class="sp"><div class="wrap"><div class="post-grid">{cards}</div></div></section>
+<section class="sec contact"><div class="wrap">{cta_band(lang)}</div></section>
+</main>
+
+""" + footer_and_widgets(lang, home, home, "/")
+    write_page(path, html)
+
+
+def build_post(lang, p):
+    t, u = T[lang], S[lang]
+    other = OTHER[lang]
+    home = "/" if lang == "es" else "/en/"
+    path = post_path(lang, p)
+    url = DOMAIN + path
+    title = f"{p['title'][lang]} | Sculptology"
+    desc = trim(p["desc"][lang])
+    body = render_body(p["body"][lang], lang)
+    ld = [
+        {"@context": "https://schema.org", "@type": "BlogPosting", "headline": p["title"][lang], "description": p["desc"][lang],
+         "image": [DOMAIN + "/assets/img/" + (p.get("og_image") or "treatment.webp")], "datePublished": p["date"], "dateModified": p["updated"],
+         "inLanguage": lang, "mainEntityOfPage": {"@type": "WebPage", "@id": url},
+         "author": {"@type": "Person", "name": "Diana Noris", "jobTitle": "Aesthetician", "worksFor": {"@id": DOMAIN + "/#business"}},
+         "publisher": {"@type": "Organization", "name": "Sculptology", "url": DOMAIN + "/"}},
+        {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": u["home"], "item": DOMAIN + home},
+            {"@type": "ListItem", "position": 2, "name": "Blog", "item": DOMAIN + blog_path(lang)},
+            {"@type": "ListItem", "position": 3, "name": p["title"][lang], "item": url}]},
+    ]
+    rel_services = "".join(f'<a class="mini" href="{page_path(lang, SVC_BY_ID[i])}">{svg(SVC_BY_ID[i]["icon"])}<span>{SVC_BY_ID[i]["card"][lang]}</span></a>' for i in p["services"])
+    more = [q for q in POSTS_PUB if q is not p][:3]
+    more_html = ""
+    if more:
+        more_html = (f'<section class="sp alt"><div class="wrap"><h2>{t["more_posts"]}</h2><div class="post-grid">'
+                     + "".join(post_card(lang, q, i) for i, q in enumerate(more))
+                     + f'</div><div class="sp-cta"><a class="btn dark-ghost" href="{blog_path(lang)}">{t["all_posts"]} {ARROW}</a></div></div></section>')
+    html = head(lang, title, desc, path, post_path("es", p), post_path("en", p), "/", ld, og_type="article", og_image=p.get("og_image")) + f"""</head>
+<body id="top">
+""" + header(lang, home, home, post_path("es", p), post_path("en", p), solid=True) + f"""
+<main id="main">
+<section class="s-hero post-hero">
+  <div class="wrap narrow">
+    <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="{home}">{u["home"]}</a></li><li><a href="{blog_path(lang)}">Blog</a></li><li aria-current="page">{p["title"][lang]}</li></ol></nav>
+    <span class="kicker">{p["category"][lang]}</span>
+    <h1>{p["title"][lang]}</h1>
+    <p class="post-meta">{t["by"]} <strong>Diana Noris</strong> · <time datetime="{p["date"]}">{fmt_date(lang, p["date"])}</time> · {p["read"]} {t["blog_min"]}</p>
+  </div>
+</section>
+<article class="sp article"><div class="wrap narrow" data-gallery>{body}</div></article>
+<section class="sp"><div class="wrap narrow">
+  <div class="author"><img src="/assets/img/diana-avatar.webp" alt="Diana Noris" width="240" height="240" loading="lazy" decoding="async">
+    <div><b>Diana Noris</b><span>{t["author_role"]}</span><p>{t["author_bio"]}</p></div></div>
+  <div class="sp-cta"><a class="btn" {BOOK_ATTR}>{t["book"]} {ARROW}</a><p class="appt-note">{t["appt"]}</p></div>
+</div></section>
+<section class="sp alt"><div class="wrap"><h2>{t["rel_services"]}</h2><div class="mini-grid">{rel_services}</div></div></section>
+{more_html}
+<section class="sec contact"><div class="wrap">{cta_band(lang)}</div></section>
+</main>
+
+""" + footer_and_widgets(lang, home, home, "/")
     write_page(path, html)
 
 
@@ -583,10 +768,14 @@ def write_support():
                 f'    <xhtml:link rel="alternate" hreflang="en" href="{DOMAIN}{en_p}"/>\n'
                 f'    <xhtml:link rel="alternate" hreflang="x-default" href="{DOMAIN}{es_p}"/></url>\n')
 
-    body = entry("/", "/en/", "/") + entry("/", "/en/", "/en/")
+    body = entry("/", "/en/", "/") + entry("/", "/en/", "/en/") + entry("/blog/", "/en/blog/", "/blog/") + entry("/blog/", "/en/blog/", "/en/blog/")
     for s in SERVICES:
         e, n = page_path("es", s), page_path("en", s)
         body += entry(e, n, e) + entry(e, n, n)
+    for p in POSTS_PUB:
+        e, n = post_path("es", p), post_path("en", p)
+        for own in (e, n):
+            body += entry(e, n, own).replace("</loc>", f"</loc><lastmod>{p['updated']}</lastmod>", 1)
     (SITE / "sitemap.xml").write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n' + body + "</urlset>\n",
         encoding="utf-8")
@@ -597,5 +786,8 @@ if __name__ == "__main__":
         build_home(l)
         for s in SERVICES:
             build_service(l, s)
+        build_blog_index(l)
+        for p in POSTS_PUB:
+            build_post(l, p)
     write_support()
-    print(f"built: 2 home + {2 * len(SERVICES)} service pages")
+    print(f"built: 2 home + {2 * len(SERVICES)} service pages + 2 blog indexes + {2 * len(POSTS_PUB)} posts")

@@ -132,3 +132,34 @@ S = {
   "title": "{name} in Málaga | Sculptology", "step": "Step",
  },
 }
+
+
+# ---------------------------------------------------------------- Blog
+T["es"]["nav"] = [("about", "Sobre mí"), ("services", "Servicios"), ("results", "Resultados"), ("reviews", "Opiniones"), ("blog", "Blog"), ("contact", "Contacto")]
+T["en"]["nav"] = [("about", "About"), ("services", "Services"), ("results", "Results"), ("reviews", "Reviews"), ("blog", "Blog"), ("contact", "Contact")]
+T["es"].update({
+    "blog_k": "Blog", "blog_h": "Consejos y <em>bienestar</em>",
+    "blog_p": "Guías claras sobre nuestros tratamientos, para que llegues a tu sesión con todas las dudas resueltas.",
+    "blog_all": "Ver todos los artículos", "blog_read": "Leer artículo", "blog_min": "min de lectura",
+    "blog_title": "Blog de estética y bienestar en Málaga | Sculptology",
+    "blog_desc": "Consejos y guías sobre fascia blasting, maderoterapia, cavitación, radiofrecuencia y drenaje linfático, de Diana Noris, esteticista en Málaga.",
+    "blog_h1": "Consejos de estética y bienestar",
+    "blog_lead": "Guías sencillas sobre los tratamientos de Sculptology, para que sepas qué esperar y cómo cuidarte antes y después.",
+    "by": "Por", "author_role": "Fundadora de Sculptology",
+    "author_bio": "Esteticista profesional formada en Estados Unidos, con más de 20 años de experiencia en el mundo de la estética y el bienestar. Especializada en Fascia Blasting, maderoterapia, cavitación, radiofrecuencia y drenaje linfático, en su estudio privado de Málaga Centro.",
+    "rel_services": "Tratamientos relacionados", "more_posts": "Sigue leyendo", "all_posts": "Ver todo el blog",
+})
+T["en"].update({
+    "blog_k": "Blog", "blog_h": "Tips and <em>wellbeing</em>",
+    "blog_p": "Clear guides to our treatments, so you arrive at your session with all your questions answered.",
+    "blog_all": "View all articles", "blog_read": "Read article", "blog_min": "min read",
+    "blog_title": "Aesthetics & Wellness Blog in Málaga | Sculptology",
+    "blog_desc": "Tips and guides on fascia blasting, wood therapy, cavitation, radiofrequency and lymphatic drainage from Diana Noris, aesthetician in Málaga.",
+    "blog_h1": "Aesthetics and wellness tips",
+    "blog_lead": "Simple guides to Sculptology's treatments, so you know what to expect and how to look after yourself before and after.",
+    "by": "By", "author_role": "Founder of Sculptology",
+    "author_bio": "Professional aesthetician trained in the United States, with more than 20 years of experience in the aesthetics and wellness industry. Specialising in Fascia Blasting, wood therapy, cavitation, radiofrequency and lymphatic drainage, in her private studio in central Málaga.",
+    "rel_services": "Related treatments", "more_posts": "Keep reading", "all_posts": "View the whole blog",
+})
+S["es"]["blog"] = "Del blog"
+S["en"]["blog"] = "From the blog"
