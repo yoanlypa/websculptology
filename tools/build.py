@@ -358,6 +358,43 @@ def service_photos(svc):
     return fotos, pairs
 
 
+def _paras(items):
+    return "".join(f"<p>{p}</p>" for p in items)
+
+
+def video_html(lang, svc):
+    v = svc.get("video")
+    if not v:
+        return ""
+    cap = v["caption"][lang]
+    base = "/assets/video/"
+    return (f'<section class="sp"><div class="wrap narrow"><figure class="video">'
+            f'<video controls muted loop playsinline preload="metadata" poster="{base}{v["poster"]}" aria-label="{esc(cap)}" data-autoplay>'
+            f'<source src="{base}{v["file"]}" type="video/mp4">{esc(cap)}</video>'
+            f'<figcaption>{cap}</figcaption></figure></div></section>')
+
+
+def story_html(lang, svc):
+    """Texto en primera persona de Diana (si el servicio lo tiene). Sustituye a la lista genérica de beneficios."""
+    st, u = svc["story"], S[lang]
+    intro = (f'<section class="sp alt story"><div class="wrap narrow"><span class="kicker">{st["kicker"][lang]}</span>'
+             f'<h2>{st["title"][lang]}</h2><p class="story-sub">{st["subtitle"][lang]}</p>{_paras(st["intro"][lang])}</div></section>')
+    li = "".join(f"<li>{CHECK}<span>{b}</span></li>" for b in st["benefits"][lang])
+    benefits = (f'<section class="sp alt story"><div class="wrap narrow"><h2>{st["benefits_title"][lang]}</h2>'
+                f'<p>{st["benefits_intro"][lang]}</p><ul class="checks">{li}</ul><p class="disclaimer left">{u["may_vary"]}</p></div></section>')
+    secs = ""
+    for n, sec in enumerate(st["sections"]):
+        body = _paras(sec["paras"][lang])
+        if "pull" in sec:
+            body += f'<p>{sec["pull_intro"][lang]}</p><blockquote class="pull">{sec["pull"][lang]}</blockquote>'
+        body += _paras(sec.get("after", {}).get(lang, []))
+        secs += f'<section class="sp{" alt" if n % 2 else ""} story"><div class="wrap narrow"><h2>{sec["title"][lang]}</h2>{body}</div></section>'
+    c = st["closing"]
+    closing = (f'<section class="sp story-end"><div class="wrap narrow"><h2>{c["title"][lang]}</h2>{_paras(c["paras"][lang])}'
+               f'<p class="sig">{c["signature"][lang]}</p><p class="sig-sub">{c["signature_sub"][lang]}</p></div></section>')
+    return intro, video_html(lang, svc), benefits, secs + closing
+
+
 def build_service(lang, svc):
     t, u = T[lang], S[lang]
     pre = "/"
@@ -373,7 +410,7 @@ def build_service(lang, svc):
 
     title = u["title"].format(name=name)
     lead_in = f"{name} en Málaga. " if lang == "es" else f"{name} in Málaga. "
-    desc = trim(lead_in + svc["intro"][lang])
+    desc = trim(svc["meta"][lang]) if svc.get("meta") else trim(lead_in + svc["intro"][lang])
 
     price_offers = [{"@type": "Offer", "name": p[lang], "price": str(p["price"]), "priceCurrency": "EUR"} for p in svc["prices"]]
     ld_service = {
@@ -395,6 +432,12 @@ def build_service(lang, svc):
 
     sub = f'<p class="en-sub" lang="{other}">{name_alt}</p>' if name_alt != name else ""
     benefits = "".join(f"<li>{CHECK}<span>{b}</span></li>" for b in svc["benefits"][lang])
+    if svc.get("story"):
+        s_intro, s_video, s_benefits, s_rest = story_html(lang, svc)
+        story_block = s_intro + s_video + s_benefits + s_rest
+    else:
+        story_block = (f'<section class="sp alt"><div class="wrap narrow"><h2>{u["benefits"]}</h2><ul class="checks">{benefits}</ul>'
+                       f'<p class="disclaimer left">{u["may_vary"]}</p></div></section>')
     steps = "".join(f'<li><span class="n" aria-hidden="true">{n}</span><span>{s}</span></li>' for n, s in enumerate(svc["steps"][lang], 1))
     notes = "".join(f'<div class="note"><b>{n["title"][lang]}</b><p>{n["body"][lang]}</p></div>' for n in svc["notes"])
 
@@ -451,7 +494,13 @@ def build_service(lang, svc):
     others = "".join(f'<a class="mini" href="{page_path(lang, o)}">{svg(o["icon"])}<span>{o["card"][lang]}</span></a>' for o in SERVICES if o is not svc)
     faq_cls = "sp" if review_html else "sp alt"
 
-    head_html = head(lang, title, desc, path, es_path, en_path, pre, [ld_service, ld_bc])
+    ld_all = [ld_service, ld_bc]
+    if svc.get("video"):
+        v = svc["video"]
+        ld_all.append({"@context": "https://schema.org", "@type": "VideoObject", "name": v["caption"][lang], "description": v["desc"][lang],
+                       "thumbnailUrl": f"{DOMAIN}/assets/video/{v['poster']}", "contentUrl": f"{DOMAIN}/assets/video/{v['file']}",
+                       "uploadDate": v["uploaded"], "duration": v["duration"], "inLanguage": lang})
+    head_html = head(lang, title, desc, path, es_path, en_path, pre, ld_all)
     html = head_html + f'''</head>
 <body id="top">
 ''' + header(lang, home, home, es_path, en_path, solid=True) + f'''
@@ -483,11 +532,7 @@ def build_service(lang, svc):
   <p class="intro">{svc["intro"][lang]}</p>
 </div></section>
 
-<section class="sp alt"><div class="wrap narrow">
-  <h2>{u["benefits"]}</h2>
-  <ul class="checks">{benefits}</ul>
-  <p class="disclaimer left">{u["may_vary"]}</p>
-</div></section>
+{story_block}
 
 <section class="sp"><div class="wrap narrow">
   <h2>{u["session"]}</h2>

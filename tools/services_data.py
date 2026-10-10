@@ -325,3 +325,171 @@ TAGLINES = {
 }
 for _s in SERVICES:
     _s["tagline"] = TAGLINES[_s["id"]]
+
+
+# ======================================================================
+# Texto de Diana para la página de Fascia Blasting (su especialidad).
+# Se muestra en primera persona y sustituye a la lista genérica de "Beneficios".
+# ======================================================================
+_fascia = next(s for s in SERVICES if s["id"] == "fascia")
+_fascia["meta"] = {
+    "es": "Fascia Blasting en Málaga: especialización en trabajo fascial, apariencia de la celulitis y remodelación corporal con Diana Noris en Sculptology.",
+    "en": "Fascia Blasting in Málaga: specialised fascial work, the appearance of cellulite and body contouring with Diana Noris at Sculptology.",
+}
+_fascia["story"] = {
+    "kicker": {"es": "Mi especialidad", "en": "My speciality"},
+    "title": {"es": "Esta es mi especialidad: Fascia Blasting", "en": "This is my speciality: Fascia Blasting"},
+    "subtitle": {"es": "Una técnica especializada para trabajar el cuerpo de una forma diferente",
+                 "en": "A specialised technique for working on the body in a different way"},
+    "intro": {
+        "es": [
+            "En Sculptology, el Fascia Blasting es una de mis principales especialidades y una de las técnicas que más profundamente ha transformado mi propio cuerpo.",
+            "No es un masaje convencional. No es simplemente un tratamiento estético. Es un trabajo corporal específico dirigido a la fascia, el tejido conectivo que envuelve y conecta músculos, estructuras y diferentes capas del cuerpo.",
+            "Cuando la fascia pierde movilidad o se encuentra especialmente tensa, algunas personas pueden percibir zonas más rígidas, tirantes, congestionadas o con una apariencia irregular. El trabajo de fascia blasting utiliza herramientas especialmente diseñadas y una técnica manual intensa y controlada para estimular estas zonas y favorecer una mayor movilidad de los tejidos.",
+        ],
+        "en": [
+            "At Sculptology, Fascia Blasting is one of my main specialities and one of the techniques that has most deeply transformed my own body.",
+            "It is not a conventional massage. It is not simply an aesthetic treatment. It is a specific piece of body work aimed at the fascia, the connective tissue that wraps around and links muscles, structures and the different layers of the body.",
+            "When the fascia loses mobility or is particularly tight, some people may notice areas that feel stiffer, tighter, more congested or look uneven. Fascia blasting uses specially designed tools and an intense, controlled manual technique to stimulate these areas and encourage greater mobility of the tissues.",
+        ],
+    },
+    "benefits_title": {"es": "¿Qué puede aportar el Fascia Blasting?", "en": "What can Fascia Blasting offer?"},
+    "benefits_intro": {
+        "es": "Dependiendo de cada cuerpo, de la constancia y de la respuesta individual al tratamiento, puede ayudar a:",
+        "en": "Depending on each body, on consistency and on your individual response to the treatment, it can help to:",
+    },
+    "benefits": {
+        "es": [
+            "Favorecer la movilidad y flexibilidad del tejido fascial.",
+            "Trabajar zonas de tensión y rigidez corporal.",
+            "Estimular la circulación local.",
+            "Favorecer el drenaje y la sensación de ligereza.",
+            "Mejorar visiblemente la apariencia de la piel.",
+            "Reducir la apariencia de irregularidades y hoyuelos asociados a la celulitis.",
+            "Conseguir un aspecto corporal más liso, firme y definido.",
+            "Trabajar zonas que pueden sentirse compactadas o poco móviles.",
+            "Complementar programas de remodelación corporal.",
+            "Ayudar a que determinadas zonas se vean más tonificadas y uniformes.",
+        ],
+        "en": [
+            "Encourage the mobility and flexibility of the fascial tissue.",
+            "Work on areas of tension and bodily stiffness.",
+            "Stimulate local circulation.",
+            "Support drainage and a feeling of lightness.",
+            "Visibly improve the appearance of the skin.",
+            "Reduce the appearance of the irregularities and dimples associated with cellulite.",
+            "Achieve a smoother, firmer, more defined look to the body.",
+            "Work on areas that can feel compacted or less mobile.",
+            "Complement body-contouring programmes.",
+            "Help certain areas look more toned and even.",
+        ],
+    },
+    "sections": [
+        {
+            "title": {"es": "Mi experiencia personal con la celulitis", "en": "My personal experience with cellulite"},
+            "paras": {
+                "es": [
+                    "Una de las razones por las que decidí especializarme en esta técnica es porque la utilizo personalmente desde hace tiempo y he visto cambios extraordinarios en mi propio cuerpo.",
+                    "En mi caso, con constancia, el aspecto de la celulitis que tenía en determinadas zonas prácticamente desapareció, y la piel comenzó a verse mucho más lisa, definida, firme y saludable.",
+                    "Para mí, ese cambio fue uno de los motivos principales por los que me enamoré de esta técnica.",
+                    "También he trabajado con clientas que, después de un programa constante de fascia blasting, han experimentado una reducción muy importante de la apariencia de la celulitis, hasta el punto de que en algunas zonas los hoyuelos se han vuelto prácticamente imperceptibles.",
+                ],
+                "en": [
+                    "One of the reasons I decided to specialise in this technique is that I have used it on myself for some time and have seen extraordinary changes in my own body.",
+                    "In my case, with consistency, the appearance of the cellulite I had in certain areas practically disappeared, and my skin began to look much smoother, more defined, firmer and healthier.",
+                    "For me, that change was one of the main reasons I fell in love with this technique.",
+                    "I have also worked with clients who, after a consistent fascia blasting programme, have experienced a very significant reduction in the appearance of cellulite, to the point that in some areas the dimples have become practically imperceptible.",
+                ],
+            },
+            "pull_intro": {"es": "El resultado visual puede ser un cuerpo que se percibe:", "en": "The visual result can be a body that looks and feels:"},
+            "pull": {"es": "Más liso. Más firme. Más definido. Más tonificado. Y con una apariencia mucho más saludable.",
+                     "en": "Smoother. Firmer. More defined. More toned. And with a far healthier appearance."},
+            "after": {
+                "es": ["Cada cuerpo responde de manera diferente y los resultados no pueden garantizarse, pero mi experiencia personal y profesional con esta técnica ha sido excepcional."],
+                "en": ["Every body responds differently and results cannot be guaranteed, but my personal and professional experience with this technique has been exceptional."],
+            },
+        },
+        {
+            "title": {"es": "Mucho más que un tratamiento corporal", "en": "Much more than a body treatment"},
+            "paras": {
+                "es": [
+                    "El Fascia Blasting no se limita a trabajar la superficie de la piel.",
+                    "Mi enfoque se centra en trabajar de forma progresiva aquellas zonas donde existe mayor tensión, rigidez, irregularidad o sensación de tejido compactado.",
+                    "No realizo el fascia blasting como un tratamiento genérico. Cada sesión se adapta al cuerpo, a las zonas de mayor tensión, a la tolerancia de cada persona y al objetivo que queremos trabajar.",
+                ],
+                "en": [
+                    "Fascia Blasting is not limited to working on the surface of the skin.",
+                    "My approach focuses on working progressively on those areas where there is more tension, stiffness, irregularity or a feeling of compacted tissue.",
+                    "I do not offer fascia blasting as a generic treatment. Each session is adapted to the body, to the areas of greatest tension, to each person's tolerance and to the goal we want to work towards.",
+                ],
+            },
+        },
+        {
+            "title": {"es": "Una especialidad poco común en Málaga", "en": "An uncommon speciality in Málaga"},
+            "paras": {
+                "es": [
+                    "El Fascia Blasting sigue siendo una técnica relativamente poco conocida y no es habitual encontrar profesionales que la incorporen como una verdadera especialización.",
+                    "En Sculptology quiero convertirla en uno de los tratamientos distintivos del estudio, ofreciendo un enfoque especializado y personalizado para quienes buscan algo diferente a los tratamientos corporales tradicionales.",
+                    "Mi objetivo es que las personas que busquen fascia blasting en Málaga encuentren un espacio donde esta técnica no sea simplemente un complemento, sino una auténtica especialidad.",
+                ],
+                "en": [
+                    "Fascia Blasting is still a relatively little-known technique, and it is not common to find professionals who offer it as a true speciality.",
+                    "At Sculptology I want it to be one of the studio's distinctive treatments, offering a specialised, personalised approach for those looking for something different from traditional body treatments.",
+                    "My aim is that people searching for fascia blasting in Málaga find a place where this technique is not simply an add-on, but a genuine speciality.",
+                ],
+            },
+        },
+        {
+            "title": {"es": "El cuerpo no se trabaja igual en todas las personas", "en": "Every body is worked on differently"},
+            "paras": {
+                "es": [
+                    "Cada cuerpo responde de manera diferente.",
+                    "Por eso, antes de comenzar, observo las zonas que presentan mayor tensión, rigidez, acumulación o irregularidad y adapto la intensidad y el trabajo a cada persona.",
+                    "Durante las sesiones podemos combinar diferentes técnicas según las necesidades del cuerpo, incluyendo fascia blasting, drenaje linfático, masaje corporal, radiofrecuencia u otras terapias disponibles en Sculptology.",
+                    "El objetivo no es aplicar una fórmula idéntica a todo el mundo.",
+                    "El objetivo es entender el cuerpo, trabajar las zonas que realmente lo necesitan y desarrollar un tratamiento progresivo y personalizado.",
+                ],
+                "en": [
+                    "Every body responds differently.",
+                    "That is why, before starting, I look at the areas with the most tension, stiffness, build-up or irregularity, and I adapt the intensity and the work to each person.",
+                    "During sessions we can combine different techniques according to the body's needs, including fascia blasting, lymphatic drainage, body massage, radiofrequency or other therapies available at Sculptology.",
+                    "The aim is not to apply an identical formula to everyone.",
+                    "The aim is to understand the body, work on the areas that really need it and develop a progressive, personalised treatment.",
+                ],
+            },
+        },
+    ],
+    "closing": {
+        "title": {"es": "Mi especialidad. Mi experiencia. Mi método.", "en": "My speciality. My experience. My method."},
+        "paras": {
+            "es": [
+                "Descubrí esta técnica primero como usuaria.",
+                "Vi cómo cambió mi propio cuerpo.",
+                "Después comencé a observar resultados muy significativos en mis clientas.",
+                "Y por esa razón decidí convertir el Fascia Blasting en una de mis principales especialidades profesionales y en uno de los tratamientos estrella de Sculptology.",
+            ],
+            "en": [
+                "I discovered this technique first as a client.",
+                "I saw how it changed my own body.",
+                "Then I began to see very significant results in my clients.",
+                "And for that reason I decided to make Fascia Blasting one of my main professional specialities and one of Sculptology's signature treatments.",
+            ],
+        },
+        "signature": {"es": "Fascia Blasting by Sculptology", "en": "Fascia Blasting by Sculptology"},
+        "signature_sub": {
+            "es": "Especialización en trabajo fascial, apariencia de la celulitis y remodelación corporal en Málaga.",
+            "en": "Specialising in fascial work, the appearance of cellulite and body contouring in Málaga.",
+        },
+    },
+}
+
+# Vídeo de Diana trabajando (archivos en site/assets/video/). Sin audio, 14 s, 1024x576.
+_fascia["video"] = {
+    "file": "fascia-blasting.mp4",
+    "poster": "fascia-blasting-poster.webp",
+    "duration": "PT14S",
+    "uploaded": "2026-10-09",
+    "caption": {"es": "Diana realizando una sesión de Fascia Blasting", "en": "Diana performing a Fascia Blasting session"},
+    "desc": {"es": "Vídeo de una sesión de Fascia Blasting con Diana Noris, de Sculptology.", "en": "Video of a Fascia Blasting session with Diana Noris of Sculptology."},
+}
+# TODO Diana: confirmar que la clienta que sale en el vídeo ha dado permiso para publicarlo.

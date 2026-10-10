@@ -70,6 +70,18 @@
     t.innerHTML += t.innerHTML; t.dataset.dup = "1";
   }, "marquee");
 
+  /* vídeo: se reproduce en silencio solo mientras está a la vista (no si el sistema pide menos movimiento) */
+  safe(function () {
+    var vids = $$("video[data-autoplay]"); if (!vids.length || reduced || !("IntersectionObserver" in window)) return;
+    var vio = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        var v = en.target;
+        if (en.isIntersecting) { var p = v.play(); if (p && p.catch) p.catch(function () {}); } else { v.pause(); }
+      });
+    }, { threshold: 0.35 });
+    vids.forEach(function (v) { vio.observe(v); });
+  }, "video");
+
   /* visor de fotos */
   safe(function () {
     var lb = $(".lightbox"); if (!lb) return;
