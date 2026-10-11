@@ -455,3 +455,14 @@ section{position:relative}
 @media (max-width:640px){
   .post-fig,.post-fig.right,.post-fig.left{float:none;width:100%;margin:6px 0 16px}
 }
+
+/* ---------- redes sociales ---------- */
+.social{display:inline-grid;place-items:center;width:46px;height:46px;border:1px solid rgba(255,255,255,.28);border-radius:50%;color:#fff;transition:background .3s,border-color .3s,transform .3s}
+.social svg{width:22px;height:22px}
+.social:hover,.social:focus-visible{background:var(--rose);border-color:var(--rose);transform:translateY(-3px)}
+.c-card .ig-link{display:inline-flex;align-items:center;gap:12px}
+.c-card .ig-link svg{width:30px;height:30px;color:var(--rose);flex:none}
+.c-cards{grid-template-columns:minmax(0,1fr)}
+.c-card{min-width:0}
+.c-card .ig-link{font-size:clamp(19px,5.6vw,30px);overflow-wrap:anywhere}
+.c-card .ig-link svg{width:clamp(24px,7vw,30px);height:clamp(24px,7vw,30px)}

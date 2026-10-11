@@ -410,6 +410,19 @@ _fascia["story"] = {
             },
         },
         {
+            "title": {"es": "Cicatrices y adherencias", "en": "Scars and adhesions"},
+            "paras": {
+                "es": [
+                    "El Fascia Blasting también puede ser una herramienta muy útil para trabajar el tejido endurecido, las adherencias y la apariencia irregular que puede quedar alrededor de ciertas cicatrices, incluidas las de cirugías y cesáreas. Al trabajar cuidadosamente la fascia y los tejidos alrededor de la zona, puede ayudar a mejorar la movilidad del tejido, suavizar zonas endurecidas y conseguir que la cicatriz se vea más plana, flexible y mejor integrada con la piel circundante.",
+                    "En mi experiencia, he visto cambios muy significativos en clientes con cicatrices antiguas, especialmente cuando existe tejido adherido o fibrosis alrededor de la zona. Los resultados varían según la antigüedad, el tipo y la profundidad de cada cicatriz.",
+                ],
+                "en": [
+                    "Fascia Blasting can also be a very useful tool for working on hardened tissue, adhesions and the uneven appearance that can be left around certain scars, including those from surgery and caesarean sections. By carefully working on the fascia and the tissues around the area, it can help improve tissue mobility, soften hardened areas and make the scar look flatter, more flexible and better blended with the surrounding skin.",
+                    "In my experience, I have seen very significant changes in clients with old scars, especially when there is adhered tissue or fibrosis around the area. Results vary according to the age, type and depth of each scar.",
+                ],
+            },
+        },
+        {
             "title": {"es": "Mucho más que un tratamiento corporal", "en": "Much more than a body treatment"},
             "paras": {
                 "es": [
@@ -493,3 +506,31 @@ _fascia["video"] = {
     "desc": {"es": "Vídeo de una sesión de Fascia Blasting con Diana Noris, de Sculptology.", "en": "Video of a Fascia Blasting session with Diana Noris of Sculptology."},
 }
 # TODO Diana: confirmar que la clienta que sale en el vídeo ha dado permiso para publicarlo.
+
+
+# Fotos propias de Drenaje Linfático (antes/después reales de Sculptology Málaga).
+# Los archivos están en site/assets/img/dl*.webp (se generan con tools/crop_drenaje.py).
+_lymph = next(s for s in SERVICES if s["id"] == "lymph")
+_lymph["own_results"] = [
+    (("Después de 3 sesiones", "After 3 sessions"), 2, ["dl3a-fb", "dl3a-fa", "dl3a-sb", "dl3a-sa"], ["lymph"]),
+    (("Después de 3 sesiones", "After 3 sessions"), 2, ["dl3b-fb", "dl3b-fa", "dl3b-sb", "dl3b-sa"], ["lymph"]),
+    (("Después de 3 sesiones", "After 3 sessions"), 2, ["dl3c-fb", "dl3c-fa", "dl3c-sb", "dl3c-sa"], ["lymph"]),
+    (("Después de 1 sesión", "After 1 session"), 2, ["dl1a-before", "dl1a-after"], ["lymph"]),
+    (("Después de 1 sesión", "After 1 session"), 2, ["dl1b-before", "dl1b-after"], ["lymph"]),
+]
+# TODO Diana: confirmar que las clientas de estas fotos han dado permiso para publicarlas.
+
+
+# Fotos propias de Fascia Blasting (archivos site/assets/img/fbl*.webp; se generan con tools/crop_fascia.py)
+_fascia_own = [
+    (("Después de 8 sesiones", "After 8 sessions"), 2, ["fbl8-before", "fbl8-after"], ["fascia"]),
+    (("Después de 6 sesiones", "After 6 sessions"), 1, ["fbl6-before", "fbl6-after"], ["fascia"]),
+]
+# Caso combinado (rodillas, 10 sesiones): sale en Drenaje Linfático y en Fascia Blasting cuando existe el archivo.
+import pathlib as _pl
+if (_pl.Path(__file__).resolve().parent.parent / "site" / "assets" / "img" / "dlf10-before.webp").exists():
+    _combo = (("Después de 10 sesiones", "After 10 sessions"), 2, ["dlf10-before", "dlf10-after"], ["lymph", "fascia"])
+    _fascia_own.append(_combo)
+    _lymph["own_results"].append(_combo)
+_fascia["own_results"] = _fascia_own
+# TODO Diana: confirmar que las clientas de estas fotos han dado permiso y que son resultados reales sin retoque.

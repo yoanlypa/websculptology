@@ -11,7 +11,7 @@ from urllib.parse import quote
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from PIL import Image  # noqa: E402
 
-from svg_icons import ICONS, svg, ARROW, WA_ICON, FLAG_ES, FLAG_EN, CHECK  # noqa: E402,F401
+from svg_icons import ICONS, svg, ARROW, WA_ICON, FLAG_ES, FLAG_EN, CHECK, INSTAGRAM  # noqa: E402,F401
 from content_data import TERM, RESULTS, REVIEWS  # noqa: E402
 from services_data import SERVICES, BOOK_URL, SHOW_PHOTO_PLACEHOLDERS, INCLUDES  # noqa: E402
 from ui_text import T, S, PHONE_TXT, PHONE_INT, WA_NUM  # noqa: E402
@@ -21,6 +21,7 @@ SITE = Path(__file__).resolve().parent.parent / "site"
 IMG = SITE / "assets" / "img"
 DOMAIN = "https://www.sculptology.eu"
 V = "20261010"  # cache busting: súbelo en cada despliegue
+INSTAGRAM_URL = "https://www.instagram.com/sculptologymalaga/"
 OTHER = {"es": "en", "en": "es"}
 BOOK_ATTR = f'href="{BOOK_URL}" target="_blank" rel="noopener"'
 
@@ -140,6 +141,7 @@ def footer_and_widgets(lang, logo_href, pfx, pre):
     <div class="f-grid">
       <a class="logo" href="{logo_href}" aria-label="Sculptology">Sculptology</a>
       <nav aria-label="Footer">{nav}</nav>
+      <a class="social" href="{INSTAGRAM_URL}" target="_blank" rel="noopener me" aria-label="{t["ig_label"]}" title="{t["ig_label"]}">{INSTAGRAM}</a>
     </div>
     <div class="f-bottom"><span>© 2026 Sculptology · Diana Noris · {t["f_rights"]}</span><span>{t["f_tag"]} · Málaga</span></div>
   </div>
@@ -207,6 +209,7 @@ def business_ld(lang):
         "openingHoursSpecification": [{"@type": "OpeningHoursSpecification", "dayOfWeek": ["Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"], "opens": "11:00", "closes": "20:00"}],
         "founder": {"@type": "Person", "name": "Diana Noris", "jobTitle": "Aesthetician"},
         "knowsLanguage": ["es", "en"],
+        "sameAs": [INSTAGRAM_URL],
         "makesOffer": [{"@type": "Offer", "itemOffered": {"@type": "Service", "name": s["name"]["en"], "url": DOMAIN + page_path("en", s)}} for s in SERVICES],
     }
 
@@ -428,6 +431,7 @@ def build_home(lang):
         <div class="c-card"><span class="kicker">{t["book_l"]}</span><p>{t["book_p"]}</p><a class="btn" {BOOK_ATTR}>{t["book"]} {ARROW}</a></div>
         <div class="c-card"><span class="kicker">{t["hours_l"]}</span><p><strong>{t["days"]}</strong> · <span lang="{OTHER[lang]}">{t["days_en"]}</span></p><p class="big">{t["hours"]}</p><small>{t["hours_alt"]}</small><small class="closed">{t["closed"]}</small></div>
         <div class="c-card"><span class="kicker">{t["wa_l"]}</span><p class="big"><a href="{wa}" target="_blank" rel="noopener">{t["wa_big"]}</a></p><small class="plain">{t["wa_small"]}</small></div>
+        <div class="c-card"><span class="kicker">Instagram</span><p class="big"><a class="ig-link" href="{INSTAGRAM_URL}" target="_blank" rel="noopener me">{INSTAGRAM} @sculptologymalaga</a></p><small class="plain">{t["ig_small"]}</small></div>
       </div>
       <div class="map reveal" style="--d:.1s"><iframe title="{t["map_t"]}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=Calle+Santa+Luc%C3%ADa+11,+M%C3%A1laga&amp;output=embed"></iframe></div>
     </div>
@@ -564,6 +568,9 @@ def build_service(lang, svc):
             ts = (tile(lang, f"servicios/{gal}/{a.name}", pre, f"{name} – {t['before']} – Sculptology Málaga", f"{name} · {t['before']}", (t["before"], ""), False)
                   + tile(lang, f"servicios/{gal}/{d.name}", pre, f"{name} – {t['after']} – Sculptology Málaga", f"{name} · {t['after']}", (t["after"], ""), True))
             ba_html += f'<article class="res" data-gallery><div class="tiles c2">{ts}</div></article>'
+        ba_note = u["may_vary"]
+    elif svc.get("own_results"):
+        ba_html = "".join(res_card(lang, r, pre, gallery=True) for r in svc["own_results"])
         ba_note = u["may_vary"]
     elif svc["key"]:
         matches = [r for r in RESULTS if svc["key"] in r[3]][:3]

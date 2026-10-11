@@ -163,3 +163,8 @@ T["en"].update({
 })
 S["es"]["blog"] = "Del blog"
 S["en"]["blog"] = "From the blog"
+
+T["es"]["ig_label"] = "Sculptology en Instagram"
+T["en"]["ig_label"] = "Sculptology on Instagram"
+T["es"]["ig_small"] = "Síguenos en Instagram"
+T["en"]["ig_small"] = "Follow us on Instagram"
