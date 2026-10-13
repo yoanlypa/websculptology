@@ -1,0 +1,5 @@
+# Archivos del repo que NO se publican en Cloudflare
+.git
+.gitignore
+.assetsignore
+.htaccess
